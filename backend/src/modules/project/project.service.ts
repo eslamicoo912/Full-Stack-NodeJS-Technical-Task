@@ -28,7 +28,8 @@ const canModify = (project: IProject, user: IUser): boolean => {
 };
 
 // Fetch a project and assert the user can at least view it
-const getAccessibleProject = async (
+// (exported so the task module can reuse the same access rule)
+export const getAccessibleProject = async (
   projectId: string,
   user: IUser
 ): Promise<IProject> => {
