@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getProjectApi } from '../../api/project.api';
@@ -9,6 +9,8 @@ import TaskFormModal from './TaskFormModal';
 import AuditLogModal from './AuditLogModal';
 import MemberList from '../projects/MemberList';
 import ConfirmDialog from '../../components/ConfirmDialog';
+import { useSocket } from '../../lib/useSocket';
+import { useToast } from '../../components/Toast';
 import {
   TaskStatus,
   TaskPriority,
@@ -28,6 +30,15 @@ function TaskBoard() {
   const { id: projectId } = useParams<{ id: string }>();
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const { showToast } = useToast();
+
+  // Show toast when real-time events arrive
+  const handleSocketEvent = useCallback((message: string) => {
+    showToast(message);
+  }, [showToast]);
+
+  // Connect to socket and listen for real-time updates
+  useSocket(projectId!, handleSocketEvent);
 
   // filters
   const [searchInput, setSearchInput] = useState('');

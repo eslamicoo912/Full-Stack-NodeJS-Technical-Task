@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { IUser } from '../../database/models/user.model';
 import { QueryString } from '../../shared/utils/api-features';
 import * as taskService from './task.service';
+import { io } from '../../server';
 
 export const listTasks = async (req: Request, res: Response): Promise<void> => {
   const result = await taskService.listTasks(
@@ -28,6 +29,9 @@ export const createTask = async (req: Request, res: Response): Promise<void> => 
     req.body
   );
   res.status(201).json({ task });
+  
+  // Emit real-time event to project room
+  io.to(`project:${req.params.projectId}`).emit('task:created', task);
 };
 
 export const updateTask = async (req: Request, res: Response): Promise<void> => {
@@ -38,6 +42,9 @@ export const updateTask = async (req: Request, res: Response): Promise<void> => 
     req.body
   );
   res.status(200).json({ task });
+  
+  // Emit real-time event to project room
+  io.to(`project:${req.params.projectId}`).emit('task:updated', task);
 };
 
 export const deleteTask = async (req: Request, res: Response): Promise<void> => {
@@ -47,6 +54,9 @@ export const deleteTask = async (req: Request, res: Response): Promise<void> => 
     String(req.params.taskId)
   );
   res.status(204).send();
+  
+  // Emit real-time event to project room
+  io.to(`project:${req.params.projectId}`).emit('task:deleted', { taskId: req.params.taskId });
 };
 
 export const getTaskAuditLogs = async (
