@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: taskboard-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  backend:
+    build: ./backend
+    container_name: taskboard-backend
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      CLIENT_URL: http://localhost
+      MONGODB_URI: mongodb://mongodb:27017/full_stack_node_technical_task
+      JWT_SECRET: docker-secret-key-change-in-production
+      JWT_EXPIRES_IN: 1d
+      SALT_ROUNDS: 10
+    depends_on:
+      - mongodb
+    restart: on-failure
+
+  frontend:
+    build: ./frontend
+    container_name: taskboard-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  mongodb_data:

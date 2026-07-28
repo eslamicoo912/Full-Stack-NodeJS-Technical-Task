@@ -50,8 +50,31 @@ A full-stack task management application built as a technical assessment. Authen
 
 - Node.js 18+ and npm
 - MongoDB running locally on `mongodb://localhost:27017` (or update `MONGODB_URI`)
+- **OR** Docker & Docker Compose (for containerized setup)
 
 ## Setup
+
+### Option A: Docker Compose (one command)
+
+```bash
+docker-compose up --build
+```
+
+This starts MongoDB, backend, and frontend. Access the app at http://localhost.
+
+To seed the database:
+
+```bash
+docker-compose exec backend npm run seed
+```
+
+To stop:
+
+```bash
+docker-compose down
+```
+
+### Option B: Manual Setup
 
 ### 1. Clone and install dependencies
 
