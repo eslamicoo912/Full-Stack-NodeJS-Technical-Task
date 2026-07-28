@@ -4,8 +4,8 @@ import { env } from '../shared/config/env';
 export const connectDatabase = async (): Promise<void> => {
   try {
     const dbUri = env.NODE_ENV === 'test'
-      ? 'mongodb://localhost:27017/task_manager_db_test'
-      : env.MONGODB_URI || 'mongodb://localhost:27017/task_manager_db';
+      ? 'mongodb://localhost:27017/full_stack_node_technical_task_test'
+      : env.MONGODB_URI || 'mongodb://localhost:27017/full_stack_node_technical_task';
 
     await mongoose.connect(dbUri);
 
