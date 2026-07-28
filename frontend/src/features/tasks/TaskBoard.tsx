@@ -6,6 +6,8 @@ import { listTasksApi, deleteTaskApi, updateTaskApi } from '../../api/task.api';
 import { getErrorMessage } from '../../api/client';
 import { useAuth } from '../auth/auth-context';
 import TaskFormModal from './TaskFormModal';
+import AuditLogModal from './AuditLogModal';
+import MemberList from '../projects/MemberList';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import {
   TaskStatus,
@@ -37,6 +39,7 @@ function TaskBoard() {
   const [showCreate, setShowCreate] = useState(false);
   const [editTarget, setEditTarget] = useState<Task | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Task | null>(null);
+  const [auditTarget, setAuditTarget] = useState<Task | null>(null);
   const [successMessage, setSuccessMessage] = useState('');
 
   // wait until the user stops typing before searching
@@ -166,6 +169,11 @@ function TaskBoard() {
         </p>
       )}
 
+      {/* member list (Admin can manage) */}
+      <div className="mt-6">
+        <MemberList project={project} />
+      </div>
+
       {/* filters */}
       <div className="mt-4 flex flex-col gap-3 sm:flex-row">
         <input
@@ -283,6 +291,12 @@ function TaskBoard() {
                       >
                         Edit
                       </button>
+                      <button
+                        onClick={() => setAuditTarget(task)}
+                        className="rounded border border-slate-300 px-2 py-1 text-xs text-slate-700 hover:bg-slate-50"
+                      >
+                        Activity
+                      </button>
                       {canDelete(task) && (
                         <button
                           onClick={() => setDeleteTarget(task)}
@@ -325,6 +339,13 @@ function TaskBoard() {
           isLoading={deleteMutation.isPending}
           onConfirm={() => deleteMutation.mutate(deleteTarget._id)}
           onCancel={() => setDeleteTarget(null)}
+        />
+      )}
+      {auditTarget && (
+        <AuditLogModal
+          projectId={projectId!}
+          task={auditTarget}
+          onClose={() => setAuditTarget(null)}
         />
       )}
     </div>
