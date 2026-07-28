@@ -61,7 +61,7 @@ export const addMemberById = (
   return Project.findByIdAndUpdate(
     projectId,
     { $addToSet: { members: userId } },
-    { new: true }
+    { returnDocument: 'after' }
   )
     .populate(POPULATE_FIELDS)
     .exec();
@@ -74,7 +74,7 @@ export const removeMemberById = (
   return Project.findByIdAndUpdate(
     projectId,
     { $pull: { members: userId } },
-    { new: true }
+    { returnDocument: 'after' }
   )
     .populate(POPULATE_FIELDS)
     .exec();
