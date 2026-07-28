@@ -10,7 +10,7 @@ import AuditLogModal from './AuditLogModal';
 import MemberList from '../projects/MemberList';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import { useSocket } from '../../lib/useSocket';
-import { useToast } from '../../components/Toast';
+import { useToast } from '../../lib/useToast';
 import {
   TaskStatus,
   TaskPriority,
