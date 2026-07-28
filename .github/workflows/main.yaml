@@ -1,57 +1,73 @@
-name: Build & Lint Workflow
+name: CI
 
 on:
-  push:
-    branches:
-      - dev
-      - main
+push:
+branches:
+- dev
+- main
+
+pull_request:
+branches:
+- dev
+- main
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
+backend:
+name: Backend - Lint & Build
+runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: [backend, frontend]
+```
+defaults:
+  run:
+    working-directory: backend
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+steps:
+  - name: Checkout repository
+    uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22.x
-          cache: npm
-          cache-dependency-path: backend/package-lock.json
+  - name: Setup Node.js
+    uses: actions/setup-node@v4
+    with:
+      node-version: 22.x
+      cache: npm
+      cache-dependency-path: backend/package-lock.json
 
-      - name: Install dependencies
-        run: npm ci
+  - name: Install dependencies
+    run: npm ci
 
-      - name: Run linter
-        run: npm run lint
+  - name: Run linter
+    run: npm run lint
 
-  build:
-    needs: lint
-    runs-on: ubuntu-latest
+  - name: Build backend
+    run: npm run build
+```
 
-    defaults:
-      run:
-        working-directory: [backend, frontend]
+frontend:
+name: Frontend - Lint & Build
+runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+```
+defaults:
+  run:
+    working-directory: frontend
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22.x
-          cache: npm
-          cache-dependency-path: backend/package-lock.json
+steps:
+  - name: Checkout repository
+    uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: npm ci
+  - name: Setup Node.js
+    uses: actions/setup-node@v4
+    with:
+      node-version: 22.x
+      cache: npm
+      cache-dependency-path: frontend/package-lock.json
 
-      - name: Build application
-        run: npm run build
+  - name: Install dependencies
+    run: npm ci
+
+  - name: Run linter
+    run: npm run lint
+
+  - name: Build frontend
+    run: npm run build
+```
