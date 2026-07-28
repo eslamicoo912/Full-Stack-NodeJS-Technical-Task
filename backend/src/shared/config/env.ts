@@ -22,6 +22,8 @@ const requireNumber = (key: string, fallback: number): number => {
 export const env = {
   NODE_ENV: requireString("NODE_ENV"),
   PORT: requireNumber("PORT", 3000),
+  // Frontend origin allowed by CORS (Vite dev server by default)
+  CLIENT_URL: process.env.CLIENT_URL?.trim() || "http://localhost:5173",
   JWT_SECRET: requireString("JWT_SECRET"),
   JWT_EXPIRES_IN: requireString("JWT_EXPIRES_IN"),
   MONGODB_URI: requireString("MONGODB_URI"),
