@@ -1,0 +1,789 @@
+{
+  "info": {
+    "_postman_id": "2e799770-4718-420a-b1e9-543d2f16edc2",
+    "name": "Full-Stack-NodeJS-Technical-Task",
+    "description": "# Full-Stack Node.js Technical Task\n\nThis is a Node.js backend API for managing projects and tasks. You can use it to handle user accounts, create and manage projects, assign tasks, and track changes through audit logs.\n\n## Base URL\n`http://localhost:3000`\n\n## Sections\n\n- **auth** — Register a new account, log in, and get your profile info.\n- **project** — Create, update, delete, and view projects. You can also add or remove members.\n- **task** — Create, update, delete, and view tasks. You can also filter tasks by different options.\n- **audit log** — View a log of all the changes that happened in the system.\n\n## Getting Started\n\n> ⚠️ You need to **register** and **login** first. After login, you'll get a token — use that token in your requests to access the other endpoints.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "22913622"
+  },
+  "item": [
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"Ahmed\", \"email\": \"ahmed@gmail.com\", \"password\": \"ahmed123\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/auth/register",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "## Register\n\nRegisters a new user account in the system.\n\n---\n\n### Method & URL\n\n`POST` `http://localhost:3000/api/auth/register`\n\n---\n\n### Request Headers\n\n| Key | Value |\n| --- | --- |\n| Content-Type | application/json |\n\n---\n\n### Request Body\n\nSend a JSON object with the following fields:\n\n| Field | Type | Required | Description |\n| --- | --- | --- | --- |\n| `name` | string | Yes | The full name of the user. |\n| `email` | string | Yes | The user's email address. Must be a valid email format. |\n| `password` | string | Yes | The user's password. |\n\n---\n\n### Example Request Body\n\n``` json\n{\n  \"name\": \"Ahmed\",\n  \"email\": \"ahmed@gmail.com\",\n  \"password\": \"ahmed123\"\n}\n\n ```\n\n---\n\n### Notes\n\n- The `email` field must be unique; registering with an already-existing email will result in an error.\n    \n- Passwords should meet the application's minimum security requirements.\n    \n- On success, the server typically returns the created user object or an authentication token."
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"eslam@example.com\",\r\n    \"password\": \"Admin@123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "## Login\n\nAuthenticates an existing user using their email and password credentials. On success, returns a JWT (JSON Web Token) along with basic user information. The token should be stored and included in the `Authorization` header for all subsequent protected requests.\n\n---\n\n## Request Details\n\n| Property | Value |\n| --- | --- |\n| **Method** | `POST` |\n| **URL** | `http://localhost:3000/api/auth/login` |\n\n---\n\n## Request Body\n\nThe request body must be sent as **JSON** (`Content-Type: application/json`).\n\n| Field | Type | Required | Description |\n| --- | --- | --- | --- |\n| `email` | `string` | ✅ Yes | The registered email address of the user. |\n| `password` | `string` | ✅ Yes | The account password associated with the email. |\n\n**Example:**\n\n``` json\n{\n  \"email\": \"eslam@gmail.com\",\n  \"password\": \"eslam123\"\n}\n\n ```\n\n---\n\n## Successful Response\n\n**Status Code:** `200 OK`\n\nReturns a JWT auth token and user information upon successful authentication.\n\n``` json\n{\n  \"token\": \"<jwt_token>\",\n  \"user\": {\n    \"id\": \"<user_id>\",\n    \"email\": \"eslam@gmail.com\",\n    \"name\": \"Eslam Ashraf\"\n  }\n}\n\n ```\n\n| Field | Type | Description |\n| --- | --- | --- |\n| `token` | `string` | JWT token to be used for authenticating subsequent requests. |\n| `user` | `object` | Basic information about the authenticated user. |\n| `user.id` | `string` | Unique identifier of the user. |\n| `user.email` | `string` | Email address of the authenticated user. |\n| `user.name` | `string` | Display name of the authenticated user. |\n\n---\n\n## Notes\n\n- The returned `token` is a **JWT (JSON Web Token)**. Store it securely (e.g., in an environment variable) and attach it to protected requests using the `Authorization: Bearer` header.\n    \n- Credentials are validated server-side — ensure the email is registered and the password is correct before sending.\n    \n- If authentication fails (wrong credentials, unregistered email, etc.), the server will return an appropriate error response (e.g., `401 Unauthorized`)."
+          },
+          "response": []
+        },
+        {
+          "name": "Get My Profile",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_0fdo}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/auth/me",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "auth",
+                "me"
+              ]
+            },
+            "description": "## Get My Profile\n\nReturns the profile information of the currently authenticated user. No request body or query parameters are needed — authentication is handled via a Bearer token in the `Authorization` header.\n\n---\n\n## Request Details\n\n| Property | Value |\n| --- | --- |\n| **Method** | `GET` |\n| **URL** | `http://localhost:3000/api/auth/me` |\n\n---\n\n## Authentication\n\nThis endpoint is **protected**. You must include a valid JWT in the `Authorization` header using the Bearer scheme.\n\n| Header | Value |\n| --- | --- |\n| `Authorization` | `Bearer` |\n\n> The variable `{{json_web_token_0fdo}}` is used as the token value. Make sure it is set in your active environment or vault before sending this request. \n  \n\n---\n\n## Request Body\n\nNone. This endpoint does not accept a request body.\n\n---\n\n## Query Parameters\n\nNone. This endpoint does not accept any query parameters.\n\n---\n\n## Successful Response\n\n**Status Code:** `200 OK`\n\nReturns the profile object of the currently logged-in user.\n\n``` json\n{\n  \"id\": \"<user_id>\",\n  \"name\": \"Eslam Ashraf\",\n  \"email\": \"eslam@gmail.com\"\n}\n\n ```\n\n---\n\n## Error Responses\n\n| Status Code | Meaning |\n| --- | --- |\n| `401 Unauthorized` | No token was provided, or the token is invalid/expired. |\n\n---\n\n## Notes\n\n- You must **register** and **login** first to obtain a token before calling this endpoint.\n    \n- This endpoint reflects the identity of the user whose token is provided — it always returns **your own** profile."
+          },
+          "response": []
+        }
+      ],
+      "description": "This folder has all the requests for user accounts. You can create a new account, log in, and see your own profile info."
+    },
+    {
+      "name": "project",
+      "item": [
+        {
+          "name": "Create Project",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{supabase_service_role_api_key_0fdo}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"App\",\r\n    \"description\": \"description for App project\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/projects/",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "projects",
+                ""
+              ]
+            },
+            "description": "## Create Project\n\nCreates a new project in the system.\n\n### Endpoint\n\n`POST http://localhost:3000/api/projects/`\n\n---\n\n### Authentication\n\nInclude a valid JWT token in the `Authorization` header:\n\n| Header | Value |\n| --- | --- |\n| `Authorization` | `Bearer` |\n\n---\n\n### Request Body\n\nSend a JSON object with the following fields:\n\n| Field | Type | Required | Description |\n| --- | --- | --- | --- |\n| `name` | `string` | Yes | The name of the project |\n| `description` | `string` | No | A short description of the project |\n\n**Example:**\n\n``` json\n{\n    \"name\": \"App\",\n    \"description\": \"description for App project\"\n}\n\n ```\n\n---\n\n### Responses\n\n| Status Code | Description |\n| --- | --- |\n| `201 Created` | Project was successfully created. Returns the created project object. |\n| `400 Bad Request` | Missing or invalid request body fields. |\n| `401 Unauthorized` | Missing or invalid authorization token. |\n| `500 Internal Server Error` | Unexpected server error. |"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Member to Project",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_0fdo}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"userId\": \"6a688e60e28b491b67178c6a\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/projects/6a688b9e30bf4fbc9cad581a/members",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "projects",
+                "6a688b9e30bf4fbc9cad581a",
+                "members"
+              ]
+            },
+            "description": "## Add Member to Project\n\nAdds an existing user as a member to a specific project.\n\n---\n\n### Endpoint\n\n`POST /api/projects/:projectId/members`\n\n---\n\n### Authentication\n\nThis request requires a valid JWT token passed in the `Authorization` header.\n\n| Header | Value |\n| --- | --- |\n| `Authorization` | `Bearer` |\n\n---\n\n### Path Parameters\n\n| Parameter | Type | Required | Description |\n| --- | --- | --- | --- |\n| `projectId` | `string` | Yes | The unique ID of the project to add the member to. |\n\n**Example:** `/api/projects/6a688b9e30bf4fbc9cad581a/members`\n\n---\n\n### Request Body\n\nSend a JSON object with the following field:\n\n| Field | Type | Required | Description |\n| --- | --- | --- | --- |\n| `userId` | `string` | Yes | The unique ID of the user to add as a member. |\n\n**Example:**\n\n``` json\n{\n  \"userId\": \"6a688e60e28b491b67178c6a\"\n}\n\n ```\n\n---\n\n### Responses\n\n| Status Code | Description |\n| --- | --- |\n| `200 OK` | User was successfully added to the project. |\n| `400 Bad Request` | Missing or invalid `userId` in the request body. |\n| `401 Unauthorized` | Missing or invalid authorization token. |\n| `403 Forbidden` | The authenticated user does not have permission to add members to this project. |\n| `404 Not Found` | The specified project or user was not found. |\n| `409 Conflict` | The user is already a member of this project. |\n\n---\n\n### Notes\n\n- Only admin can add members.\n    \n- The `projectId` in the URL must correspond to an existing project.\n    \n- The `userId` in the body must correspond to an existing registered user."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Project",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_0fdo}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"Project 3\",\r\n    \"description\": \"project 3 description\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/projects/6a688acc30bf4fbc9cad5819",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "projects",
+                "6a688acc30bf4fbc9cad5819"
+              ]
+            },
+            "description": "## Update Project\n\n### Summary\n\nUpdates an existing project's details using its unique ID. This endpoint allows partial updates — you can modify the `title`, `description`, or both without affecting other project fields.\n\n---\n\n### HTTP Method & URL\n\n```\nPATCH /api/projects/:id\n\n ```\n\n| Parameter | Type | Location | Description |\n| --- | --- | --- | --- |\n| `id` | string | Path | The unique identifier of the project to update. Example: `6a688acc30bf4fbc9cad5819` |\n\n---\n\n### Authentication\n\nThis endpoint requires a **Bearer Token**.\n\n| Header | Value |\n| --- | --- |\n| `Authorization` | `Bearer {{auth_secret_0fdo}}` |\n\nEnsure the `auth_secret_0fdo` variable is set in your active environment before sending the request.\n\n---\n\n### Request Body\n\nThe request body should be sent as **JSON**. All fields are **optional** — include only the fields you wish to update.\n\n| Field | Type | Required | Description |\n| --- | --- | --- | --- |\n| `title` | string | Optional | The new title for the project. |\n| `description` | string | Optional | The new description for the project. |\n\n#### Example Request Body\n\n``` json\n{\n  \"title\": \"Project 3\",\n  \"description\": \"project 3 description\"\n}\n\n ```\n\n---\n\n### Success Response\n\n**Status:** `200 OK`\n\nReturns the updated project object reflecting the new values.\n\n``` json\n{\n  \"id\": \"6a688acc30bf4fbc9cad5819\",\n  \"title\": \"Project 3\",\n  \"description\": \"project 3 description\",\n  \"updatedAt\": \"2024-01-15T10:30:00.000Z\"\n}\n\n ```\n\n---\n\n### Error Responses\n\n| Status Code | Description |\n| --- | --- |\n| `400 Bad Request` | The request body contains invalid data or unsupported fields. |\n| `401 Unauthorized` | Missing or invalid Bearer token. Ensure `auth_secret_0fdo` is set correctly. |\n| `404 Not Found` | No project found with the provided `:id`. Verify the project ID is correct. |"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Projects",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_0fdo}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/projects",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "projects"
+              ]
+            },
+            "description": "# Get All Projects\n\n## Summary\n\nRetrieves a complete list of all projects available to the authenticated user. This endpoint returns an array of project objects from the system, allowing clients to display, filter, or process all existing projects.\n\n---\n\n## Authentication\n\nThis endpoint requires a **Bearer Token** for authorization.\n\n- **Type:** Bearer Token\n    \n- **Token Variable:** `{{json_web_token_0fdo}}`\n    \n\nInclude the token in the `Authorization` header:\n\n```\nAuthorization: Bearer {{json_web_token_0fdo}}\n\n ```\n\n> Requests without a valid token will receive a `401 Unauthorized` response. \n  \n\n---\n\n## Request Details\n\n| Property | Value |\n| --- | --- |\n| **Method** | `GET` |\n| **URL** | `http://localhost:3000/api/projects` |\n| **Body** | None |\n| **Query Params** | None |\n\n---\n\n## Expected Response\n\nOn success, the endpoint returns a `200 OK` status with a JSON array of project objects.\n\n### Response Body (Array of Project Objects)\n\n``` json\n[\n  {\n    \"id\": 1,\n    \"name\": \"Project Alpha\",\n    \"description\": \"A description of the project\",\n    \"createdAt\": \"2024-01-15T10:30:00.000Z\",\n    \"updatedAt\": \"2024-06-01T08:00:00.000Z\",\n    \"ownerId\": 42,\n    \"status\": \"active\"\n  },\n  {\n    \"id\": 2,\n    \"name\": \"Project Beta\",\n    \"description\": \"Another project description\",\n    \"createdAt\": \"2024-03-10T14:00:00.000Z\",\n    \"updatedAt\": \"2024-07-20T11:45:00.000Z\",\n    \"ownerId\": 42,\n    \"status\": \"inactive\"\n  }\n]\n\n ```\n\n### Typical Project Object Fields\n\n| Field | Type | Description |\n| --- | --- | --- |\n| `id` | `number` | Unique identifier for the project |\n| `name` | `string` | Name of the project |\n| `description` | `string` | A brief description of the project |\n| `createdAt` | `string` | ISO 8601 timestamp of when the project was created |\n| `updatedAt` | `string` | ISO 8601 timestamp of the last update |\n| `ownerId` | `number` | ID of the user who owns the project |\n| `status` | `string` | Current status of the project (e.g., `active`, `inactive`) |\n\n---\n\n## Response Status Codes\n\n| Status Code | Meaning | Description |\n| --- | --- | --- |\n| `200 OK` | Success | The request was successful and the response body contains the projects array |\n| `401 Unauthorized` | Authentication Failed | The Bearer token is missing, expired, or invalid |\n| `500 Internal Server Error` | Server Error | An unexpected error occurred on the server side |\n\n---\n\n## Example Usage\n\nTo fetch all projects, ensure the `{{json_web_token_0fdo}}` variable is set in your active environment with a valid JWT. Then send the request — no body or query parameters are needed.\n\n``` bash\ncurl -X GET http://localhost:3000/api/projects \\\n  -H \"Authorization: Bearer <your_token_here>\"\n\n ```"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Projects Using Query Features",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{supabase_service_role_api_key_0fdo}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/projects?name=App",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "projects"
+              ],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "App"
+                }
+              ]
+            },
+            "description": "# Get All Projects Using Query Features\n\n## Summary\nRetrieves a list of all projects, with support for query parameters to filter results. Use the `name` query parameter to search for projects matching a specific name.\n\n---\n\n## Authentication\nThis endpoint requires a **Bearer Token** for authorization.\n\n- **Type:** Bearer Token\n- **Token Variable:** `{{json_web_token_0fdo}}`\n\nInclude the token in the `Authorization` header:\n```\nAuthorization: Bearer {{json_web_token_0fdo}}\n```\n\n> Requests without a valid token will receive a `401 Unauthorized` response.\n\n---\n\n## Request Details\n\n| Property         | Value                                          |\n|------------------|------------------------------------------------|\n| **Method**       | `GET`                                          |\n| **URL**          | `http://localhost:3000/api/projects?name=App`  |\n| **Body**         | None                                           |\n| **Query Params** | `name` (optional) — filter projects by name    |\n\n---\n\n## Query Parameters\n\n| Parameter | Type     | Required | Description                                                      |\n|-----------|----------|----------|------------------------------------------------------------------|\n| `name`    | `string` | No       | Filter projects whose name matches or contains the given string  |\n\n---\n\n## Expected Response\n\nOn success, the endpoint returns `200 OK` with a filtered array of project objects.\n\n```json\n[\n  {\n    \"_id\": \"6a688b9e30bf4fbc9cad581a\",\n    \"name\": \"App Project\",\n    \"description\": \"A sample application project\",\n    \"members\": [],\n    \"createdAt\": \"2024-01-01T00:00:00.000Z\",\n    \"updatedAt\": \"2024-01-01T00:00:00.000Z\"\n  }\n]\n```\n\n| Field         | Type       | Description                                      |\n|---------------|------------|--------------------------------------------------|\n| `_id`         | `string`   | Unique identifier of the project                 |\n| `name`        | `string`   | Name of the project                              |\n| `description` | `string`   | Brief description of the project                 |\n| `members`     | `array`    | List of members associated with the project      |\n| `createdAt`   | `string`   | ISO timestamp of when the project was created    |\n| `updatedAt`   | `string`   | ISO timestamp of the last update to the project  |\n\n---\n\n## Response Status Codes\n\n| Status Code                 | Description                                              |\n|-----------------------------|----------------------------------------------------------|\n| `200 OK`                    | Successfully retrieved the filtered list of projects     |\n| `400 Bad Request`           | Invalid query parameter format                           |\n| `401 Unauthorized`          | Missing or invalid Bearer token                          |\n| `500 Internal Server Error` | An unexpected error occurred on the server               |"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Project By Id",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{supabase_service_role_api_key_0fdo}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/projects/6a688b9e30bf4fbc9cad581a",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "projects",
+                "6a688b9e30bf4fbc9cad581a"
+              ]
+            },
+            "description": "# Get Project By Id\n\n## Summary\nRetrieves the details of a single project by its unique ID. Returns the full project object including its metadata and members.\n\n---\n\n## Authentication\nThis endpoint requires a **Bearer Token** for authorization.\n\n- **Type:** Bearer Token\n- **Token Variable:** `{{json_web_token_0fdo}}`\n\nInclude the token in the `Authorization` header:\n```\nAuthorization: Bearer {{json_web_token_0fdo}}\n```\n\n> Requests without a valid token will receive a `401 Unauthorized` response.\n\n---\n\n## Request Details\n\n| Property         | Value                                                            |\n|------------------|------------------------------------------------------------------|\n| **Method**       | `GET`                                                            |\n| **URL**          | `http://localhost:3000/api/projects/6a688b9e30bf4fbc9cad581a`   |\n| **Body**         | None                                                             |\n| **Query Params** | None                                                             |\n\n---\n\n## Path Parameters\n\n| Parameter   | Type     | Required | Description                                    |\n|-------------|----------|----------|------------------------------------------------|\n| `projectId` | `string` | Yes      | The unique identifier of the project to fetch  |\n\n---\n\n## Expected Response\n\nOn success, the endpoint returns `200 OK` with a single project object.\n\n```json\n{\n  \"_id\": \"6a688b9e30bf4fbc9cad581a\",\n  \"name\": \"App Project\",\n  \"description\": \"A sample application project\",\n  \"members\": [\n    {\n      \"userId\": \"6a688e60e28b491b67178c6a\",\n      \"role\": \"developer\"\n    }\n  ],\n  \"createdAt\": \"2024-01-01T00:00:00.000Z\",\n  \"updatedAt\": \"2024-01-01T00:00:00.000Z\"\n}\n```\n\n| Field         | Type     | Description                                      |\n|---------------|----------|--------------------------------------------------|\n| `_id`         | `string` | Unique identifier of the project                 |\n| `name`        | `string` | Name of the project                              |\n| `description` | `string` | Brief description of the project                 |\n| `members`     | `array`  | List of members with their roles in the project  |\n| `createdAt`   | `string` | ISO timestamp of when the project was created    |\n| `updatedAt`   | `string` | ISO timestamp of the last update to the project  |\n\n---\n\n## Response Status Codes\n\n| Status Code                 | Description                                              |\n|-----------------------------|----------------------------------------------------------|\n| `200 OK`                    | Successfully retrieved the project details               |\n| `400 Bad Request`           | Invalid project ID format                                |\n| `401 Unauthorized`          | Missing or invalid Bearer token                          |\n| `404 Not Found`             | No project found with the specified ID                   |\n| `500 Internal Server Error` | An unexpected error occurred on the server               |"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Project",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTNhOTIzZGJiMjE3NzI2NDY1MThiMjEiLCJyb2xlIjoiQWRtaW4iLCJpYXQiOjE3ODIyODMyODMsImV4cCI6MTc4MjM2OTY4M30.KziihqgyQxbDq8-fgZTDvro3jhCf9nYZVb3tGYCTZvk",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/v1/projects/6a3a923dbb21772646518b23",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "v1",
+                "projects",
+                "6a3a923dbb21772646518b23"
+              ]
+            },
+            "description": "# Delete Project\n\n## Summary\nDeletes an existing project by its unique ID. Once deleted, the project and all associated data are permanently removed.\n\n---\n\n## Authentication\nThis endpoint requires a **Bearer Token** for authorization.\n\n- **Type:** Bearer Token\n- **Token Variable:** `{{json_web_token_0fdo}}`\n\nInclude the token in the `Authorization` header:\n```\nAuthorization: Bearer {{json_web_token_0fdo}}\n```\n\n> Requests without a valid token will receive a `401 Unauthorized` response.\n\n---\n\n## Request Details\n\n| Property         | Value                                                              |\n|------------------|--------------------------------------------------------------------|\n| **Method**       | `DELETE`                                                           |\n| **URL**          | `http://localhost:3000/api/v1/projects/6a3a923dbb21772646518b23`  |\n| **Body**         | None                                                               |\n| **Query Params** | None                                                               |\n\n---\n\n## Path Parameters\n\n| Parameter   | Type     | Required | Description                              |\n|-------------|----------|----------|------------------------------------------|\n| `projectId` | `string` | Yes      | The unique identifier of the project to delete |\n\n---\n\n## Expected Response\n\nOn success, the endpoint returns `200 OK` or `204 No Content`.\n\n```json\n{\n  \"message\": \"Project deleted successfully\"\n}\n```\n\n| Field     | Type     | Description                        |\n|-----------|----------|------------------------------------|\n| `message` | `string` | Confirmation message of deletion   |\n\n---\n\n## Response Status Codes\n\n| Status Code                 | Description                                              |\n|-----------------------------|----------------------------------------------------------|\n| `200 OK` / `204 No Content` | Project was successfully deleted                         |\n| `400 Bad Request`           | Invalid project ID format or missing required parameter  |\n| `401 Unauthorized`          | Missing or invalid Bearer token                          |\n| `404 Not Found`             | No project found with the specified ID                   |\n| `500 Internal Server Error` | An unexpected error occurred on the server               |"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Member from Project",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_0fdo}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/projects/6a688b9e30bf4fbc9cad581a/members/6a688e60e28b491b67178c6a",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "projects",
+                "6a688b9e30bf4fbc9cad581a",
+                "members",
+                "6a688e60e28b491b67178c6a"
+              ]
+            },
+            "description": "# Delete Member from Project\n\n## Summary\n\nRemoves a specific member from a project using their user ID. The member will lose access to the project upon successful removal.\n\n---\n\n## Authentication\n\nThis endpoint requires a **Bearer Token** for authorization.\n\n- **Type:** Bearer Token\n    \n- **Token Variable:** `{{json_web_token_0fdo}}`\n    \n\nInclude the token in the `Authorization` header:\n\n```\nAuthorization: Bearer {{json_web_token_0fdo}}\n\n ```\n\n> Requests without a valid token will receive a `401 Unauthorized` response. \n  \n\n---\n\n## Request Details\n\n| Property | Value |\n| --- | --- |\n| **Method** | `DELETE` |\n| **URL** | `http://localhost:3000/api/projects/6a688b9e30bf4fbc9cad581a/members/6a688e60e28b491b67178c6a` |\n| **Body** | None |\n| **Query Params** | None |\n\n---\n\n## Path Parameters\n\n| Parameter | Type | Required | Description |\n| --- | --- | --- | --- |\n| `projectId` | `string` | Yes | The unique identifier of the project |\n| `memberId` | `string` | Yes | The user ID of the member to remove from the project |\n\n---\n\n## Expected Response\n\nOn success, the endpoint returns `200 OK` or `204 No Content`.\n\n``` json\n{\n  \"message\": \"Member removed from project successfully\"\n}\n\n ```\n\n| Field | Type | Description |\n| --- | --- | --- |\n| `message` | `string` | Confirmation message of the member's removal |\n\n---\n\n## Response Status Codes\n\n| Status Code | Description |\n| --- | --- |\n| `200 OK` / `204 No Content` | Member was successfully removed from the project |\n| `400 Bad Request` | Invalid ID format or missing required path parameter |\n| `401 Unauthorized` | Missing or invalid Bearer token |\n| `404 Not Found` | Project or member not found with the specified IDs |\n| `500 Internal Server Error` | An unexpected error occurred on the server |"
+          },
+          "response": []
+        }
+      ],
+      "description": "This folder has all the requests for managing projects. You can create, update, and delete projects, and also add or remove members from a project."
+    },
+    {
+      "name": "task",
+      "item": [
+        {
+          "name": "Create Task",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{supabase_service_role_api_key_0n36}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"Task 3\",\r\n    \"description\": \"task 3 description\",\r\n    \"dueDate\": \"2026-8-15\",\r\n    \"priority\": \"High\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/projects/6a688b9e30bf4fbc9cad581a/tasks",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "projects",
+                "6a688b9e30bf4fbc9cad581a",
+                "tasks"
+              ]
+            },
+            "description": "# Create Task\n\n## Summary\n\nCreates a new task under a specific project. Returns the newly created task object upon success.\n\n---\n\n## Authentication\n\nThis endpoint requires a **Bearer Token** for authorization.\n\n- **Type:** Bearer Token\n    \n- **Token Variable:** `{{json_web_token_0fdo}}`\n    \n\nInclude the token in the `Authorization` header:\n\n```\nAuthorization: Bearer {{json_web_token_0fdo}}\n\n ```\n\n> Requests without a valid token will receive a `401 Unauthorized` response. \n  \n\n---\n\n## Request Details\n\n| Property | Value |\n| --- | --- |\n| **Method** | `POST` |\n| **URL** | `http://localhost:3000/api/projects/6a688b9e30bf4fbc9cad581a/tasks` |\n| **Body** | JSON |\n| **Query Params** | None |\n\n---\n\n## Path Parameters\n\n| Parameter | Type | Required | Description |\n| --- | --- | --- | --- |\n| `projectId` | string | Yes | The unique identifier of the project under which the task will be created. |\n\n---\n\n## Request Body\n\n| Field | Type | Required | Description |\n| --- | --- | --- | --- |\n| `title` | string | Yes | The title/name of the task. |\n| `description` | string | No | A detailed description of the task. |\n| `status` | string | No | The current status of the task (e.g., `\"Todo\"`, `\"In Progress\"`, `\"Done\"`). |\n\nExample:\n\n``` json\n{\n  \"title\": \"Design landing page\",\n  \"description\": \"Create wireframes and mockups for the new landing page.\",\n  \"status\": \"Todo\",\n  \"Priority\": \"Low\"\n}\n\n ```\n\n---\n\n## Expected Response\n\nOn success, the endpoint returns `201 Created`.\n\n``` json\n{\n  \"_id\": \"6a689522f4c9d2b95880d516\",\n  \"title\": \"Design landing page\",\n  \"description\": \"Create wireframes and mockups for the new landing page.\",\n  \"status\": \"Todo\",\n  \"priority\": \"Low\",\n  \"projectId\": \"6a688b9e30bf4fbc9cad581a\",\n  \"createdAt\": \"2024-01-15T10:30:00.000Z\",\n  \"updatedAt\": \"2024-01-15T10:30:00.000Z\"\n}\n\n ```\n\n| Field | Type | Description |\n| --- | --- | --- |\n| `_id` | string | The unique identifier of the created task. |\n| `title` | string | The title of the task. |\n| `description` | string | The description of the task. |\n| `status` | string | The current status of the task. |\n| `projectId` | string | The ID of the project this task belongs to. |\n| `createdAt` | string | ISO 8601 timestamp of when the task was created. |\n| `updatedAt` | string | ISO 8601 timestamp of the last update. |\n\n---\n\n## Response Status Codes\n\n| Status Code | Description |\n| --- | --- |\n| `201 Created` | Task was successfully created. |\n| `400 Bad Request` | Missing required fields or invalid input data. |\n| `401 Unauthorized` | Missing or invalid Bearer token. |\n| `404 Not Found` | The specified project was not found. |\n| `500 Internal Server Error` | An unexpected error occurred on the server. |"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Task",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_0n36}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"status\": \"In Progress\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/projects/6a688b9e30bf4fbc9cad581a/tasks/6a689522f4c9d2b95880d516",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "projects",
+                "6a688b9e30bf4fbc9cad581a",
+                "tasks",
+                "6a689522f4c9d2b95880d516"
+              ]
+            },
+            "description": "# Update Task\n\n## Summary\n\nPartially updates an existing task within a specific project. Only the fields provided in the request body will be updated; all other fields remain unchanged.\n\n---\n\n## Authentication\n\nThis endpoint requires a **Bearer Token** for authorization.\n\n- **Type:** Bearer Token\n    \n- **Token Variable:** `{{json_web_token_0fdo}}`\n    \n\nInclude the token in the `Authorization` header:\n\n```\nAuthorization: Bearer {{json_web_token_0fdo}}\n\n ```\n\n> Requests without a valid token will receive a `401 Unauthorized` response. \n  \n\n---\n\n## Request Details\n\n| Property | Value |\n| --- | --- |\n| **Method** | `PATCH` |\n| **URL** | `http://localhost:3000/api/projects/6a688b9e30bf4fbc9cad581a/tasks/6a689522f4c9d2b95880d516` |\n| **Body** | JSON |\n| **Query Params** | None |\n\n---\n\n## Path Parameters\n\n| Parameter | Type | Required | Description |\n| --- | --- | --- | --- |\n| `projectId` | string | Yes | The unique identifier of the project the task belongs to. |\n| `taskId` | string | Yes | The unique identifier of the task to update. |\n\n---\n\n## Request Body\n\nAll fields are optional. Provide only the fields you wish to update.\n\n| Field | Type | Required | Description |\n| --- | --- | --- | --- |\n| `title` | string | No | The new title/name of the task. |\n| `description` | string | No | The new description of the task. |\n| `status` | string | No | The new status of the task (e.g., `\"Todo\"`, `\"In Progress\"`, `\"Done\"`). |\n\nExample:\n\n``` json\n{\n  \"status\": \"In Progress\",\n  \"description\": \"Updated description with more details.\"\n}\n\n ```\n\n---\n\n## Expected Response\n\nOn success, the endpoint returns `200 OK` with the updated task object.\n\n``` json\n{\n  \"_id\": \"6a689522f4c9d2b95880d516\",\n  \"title\": \"Design landing page\",\n  \"description\": \"Updated description with more details.\",\n  \"status\": \"In Progress\",\n  \"projectId\": \"6a688b9e30bf4fbc9cad581a\",\n  \"createdAt\": \"2024-01-15T10:30:00.000Z\",\n  \"updatedAt\": \"2024-01-15T11:00:00.000Z\"\n}\n\n ```\n\n| Field | Type | Description |\n| --- | --- | --- |\n| `_id` | string | The unique identifier of the task. |\n| `title` | string | The title of the task. |\n| `description` | string | The description of the task. |\n| `status` | string | The current status of the task. |\n| `projectId` | string | The ID of the project this task belongs to. |\n| `createdAt` | string | ISO 8601 timestamp of when the task was created. |\n| `updatedAt` | string | ISO 8601 timestamp of the last update. |\n\n---\n\n## Response Status Codes\n\n| Status Code | Description |\n| --- | --- |\n| `200 OK` | Task was successfully updated. |\n| `400 Bad Request` | Invalid input data or malformed request body. |\n| `401 Unauthorized` | Missing or invalid Bearer token. |\n| `404 Not Found` | The specified project or task was not found. |\n| `500 Internal Server Error` | An unexpected error occurred on the server. |"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Tasks",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_0n36}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/api/projects/6a688b9e30bf4fbc9cad581a/tasks",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "projects",
+                "6a688b9e30bf4fbc9cad581a",
+                "tasks"
+              ]
+            },
+            "description": "# Get All Tasks\n\n## Summary\nRetrieves all tasks associated with a specific project. Returns an array of task objects belonging to the given project.\n\n---\n\n## Authentication\nThis endpoint requires a **Bearer Token** for authorization.\n\n- **Type:** Bearer Token\n- **Token Variable:** `{{json_web_token_0fdo}}`\n\nInclude the token in the `Authorization` header:\n```\nAuthorization: Bearer {{json_web_token_0fdo}}\n```\n\n> Requests without a valid token will receive a `401 Unauthorized` response.\n\n---\n\n## Request Details\n\n| Property         | Value                                                                |\n|------------------|----------------------------------------------------------------------|\n| **Method**       | `GET`                                                                |\n| **URL**          | `http://localhost:3000/api/projects/6a688b9e30bf4fbc9cad581a/tasks` |\n| **Body**         | None                                                                 |\n| **Query Params** | None                                                                 |\n\n---\n\n## Path Parameters\n\n| Parameter   | Type   | Required | Description                                                    |\n|-------------|--------|----------|----------------------------------------------------------------|\n| `projectId` | string | Yes      | The unique identifier of the project whose tasks to retrieve.  |\n\n---\n\n## Request Body\n\nThis endpoint does not require a request body.\n\n---\n\n## Expected Response\n\nOn success, the endpoint returns `200 OK` with an array of task objects.\n\n```json\n[\n  {\n    \"_id\": \"6a689522f4c9d2b95880d516\",\n    \"title\": \"Design landing page\",\n    \"description\": \"Create wireframes and mockups for the new landing page.\",\n    \"status\": \"Todo\",\n    \"projectId\": \"6a688b9e30bf4fbc9cad581a\",\n    \"createdAt\": \"2024-01-15T10:30:00.000Z\",\n    \"updatedAt\": \"2024-01-15T10:30:00.000Z\"\n  },\n  {\n    \"_id\": \"6a689600f4c9d2b95880d517\",\n    \"title\": \"Implement authentication\",\n    \"description\": \"Set up JWT-based authentication flow.\",\n    \"status\": \"In Progress\",\n    \"projectId\": \"6a688b9e30bf4fbc9cad581a\",\n    \"createdAt\": \"2024-01-14T09:00:00.000Z\",\n    \"updatedAt\": \"2024-01-15T08:00:00.000Z\"\n  }\n]\n```\n\n| Field         | Type   | Description                                      |\n|---------------|--------|--------------------------------------------------|\n| `_id`         | string | The unique identifier of the task.               |\n| `title`       | string | The title of the task.                           |\n| `description` | string | The description of the task.                     |\n| `status`      | string | The current status of the task.                  |\n| `projectId`   | string | The ID of the project this task belongs to.      |\n| `createdAt`   | string | ISO 8601 timestamp of when the task was created. |\n| `updatedAt`   | string | ISO 8601 timestamp of the last update.           |\n\n---\n\n## Response Status Codes\n\n| Status Code               | Description                                              |\n|---------------------------|----------------------------------------------------------|\n| `200 OK`                  | Tasks retrieved successfully.                            |\n| `401 Unauthorized`        | Missing or invalid Bearer token.                         |\n| `404 Not Found`           | The specified project was not found.                     |\n| `500 Internal Server Error` | An unexpected error occurred on the server.            |"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Tasks Using Query Features",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_0n36}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/api/projects/6a688b9e30bf4fbc9cad581a/tasks?status=Done",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "projects",
+                "6a688b9e30bf4fbc9cad581a",
+                "tasks"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "Done"
+                }
+              ]
+            },
+            "description": "# Get All Tasks Using Query Features\n\n## Summary\n\nRetrieves all tasks for a specific project with support for filtering via query parameters. Allows narrowing results by status, title, or other supported fields.\n\n---\n\n## Authentication\n\nThis endpoint requires a **Bearer Token** for authorization.\n\n- **Type:** Bearer Token\n    \n- **Token Variable:** `{{json_web_token_0fdo}}`\n    \n\nInclude the token in the `Authorization` header:\n\n```\nAuthorization: Bearer {{json_web_token_0fdo}}\n\n ```\n\n> Requests without a valid token will receive a `401 Unauthorized` response. \n  \n\n---\n\n## Request Details\n\n| Property | Value |\n| --- | --- |\n| **Method** | `GET` |\n| **URL** | `http://localhost:3000/api/projects/6a688b9e30bf4fbc9cad581a/tasks?status=Done` |\n| **Body** | None |\n| **Query Params** | `status`, `title` |\n\n---\n\n## Path Parameters\n\n| Parameter | Type | Required | Description |\n| --- | --- | --- | --- |\n| `projectId` | string | Yes | The unique identifier of the project whose tasks to retrieve. |\n\n---\n\n## Query Parameters\n\n| Parameter | Type | Required | Description |\n| --- | --- | --- | --- |\n| `status` | string | No | Filter tasks by status. Accepted values: `\"Todo\"`, `\"In Progress\"`, `\"Done\"`. |\n| `title` | string | No | Filter tasks by title (partial or full match). |\n\nExample:\n\n```\nGET /api/projects/6a688b9e30bf4fbc9cad581a/tasks?status=Done\nGET /api/projects/6a688b9e30bf4fbc9cad581a/tasks?status=In Progress&title=landing\n\n ```\n\n---\n\n## Request Body\n\nThis endpoint does not require a request body.\n\n---\n\n## Expected Response\n\nOn success, the endpoint returns `200 OK` with a filtered array of task objects.\n\n``` json\n[\n  {\n    \"_id\": \"6a689600f4c9d2b95880d517\",\n    \"title\": \"Implement authentication\",\n    \"description\": \"Set up JWT-based authentication flow.\",\n    \"status\": \"Done\",\n    \"projectId\": \"6a688b9e30bf4fbc9cad581a\",\n    \"createdAt\": \"2024-01-14T09:00:00.000Z\",\n    \"updatedAt\": \"2024-01-16T12:00:00.000Z\"\n  }\n]\n\n ```\n\n| Field | Type | Description |\n| --- | --- | --- |\n| `_id` | string | The unique identifier of the task. |\n| `title` | string | The title of the task. |\n| `description` | string | The description of the task. |\n| `status` | string | The current status of the task. |\n| `projectId` | string | The ID of the project this task belongs to. |\n| `createdAt` | string | ISO 8601 timestamp of when the task was created. |\n| `updatedAt` | string | ISO 8601 timestamp of the last update. |\n\n> If no tasks match the provided filters, an empty array `[]` is returned. \n  \n\n---\n\n## Response Status Codes\n\n| Status Code | Description |\n| --- | --- |\n| `200 OK` | Tasks retrieved successfully (may be an empty array). |\n| `400 Bad Request` | Invalid query parameter value. |\n| `401 Unauthorized` | Missing or invalid Bearer token. |\n| `404 Not Found` | The specified project was not found. |\n| `500 Internal Server Error` | An unexpected error occurred on the server. |"
+          },
+          "response": []
+        },
+        {
+          "name": "Get One Task",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{supabase_service_role_api_key_0n36}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/api/projects/6a688b9e30bf4fbc9cad581a/tasks/6a689522f4c9d2b95880d516",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "projects",
+                "6a688b9e30bf4fbc9cad581a",
+                "tasks",
+                "6a689522f4c9d2b95880d516"
+              ]
+            },
+            "description": "# Get One Task\n\n## Summary\nRetrieves a single task by its unique identifier within a specific project. Returns the full task object if found.\n\n---\n\n## Authentication\nThis endpoint requires a **Bearer Token** for authorization.\n\n- **Type:** Bearer Token\n- **Token Variable:** `{{json_web_token_0fdo}}`\n\nInclude the token in the `Authorization` header:\n```\nAuthorization: Bearer {{json_web_token_0fdo}}\n```\n\n> Requests without a valid token will receive a `401 Unauthorized` response.\n\n---\n\n## Request Details\n\n| Property         | Value                                                                                          |\n|------------------|------------------------------------------------------------------------------------------------|\n| **Method**       | `GET`                                                                                          |\n| **URL**          | `http://localhost:3000/api/projects/6a688b9e30bf4fbc9cad581a/tasks/6a689522f4c9d2b95880d516`  |\n| **Body**         | None                                                                                           |\n| **Query Params** | None                                                                                           |\n\n---\n\n## Path Parameters\n\n| Parameter   | Type   | Required | Description                                                    |\n|-------------|--------|----------|----------------------------------------------------------------|\n| `projectId` | string | Yes      | The unique identifier of the project the task belongs to.      |\n| `taskId`    | string | Yes      | The unique identifier of the task to retrieve.                 |\n\n---\n\n## Request Body\n\nThis endpoint does not require a request body.\n\n---\n\n## Expected Response\n\nOn success, the endpoint returns `200 OK` with a single task object.\n\n```json\n{\n  \"_id\": \"6a689522f4c9d2b95880d516\",\n  \"title\": \"Design landing page\",\n  \"description\": \"Create wireframes and mockups for the new landing page.\",\n  \"status\": \"Todo\",\n  \"projectId\": \"6a688b9e30bf4fbc9cad581a\",\n  \"createdAt\": \"2024-01-15T10:30:00.000Z\",\n  \"updatedAt\": \"2024-01-15T10:30:00.000Z\"\n}\n```\n\n| Field         | Type   | Description                                      |\n|---------------|--------|--------------------------------------------------|\n| `_id`         | string | The unique identifier of the task.               |\n| `title`       | string | The title of the task.                           |\n| `description` | string | The description of the task.                     |\n| `status`      | string | The current status of the task.                  |\n| `projectId`   | string | The ID of the project this task belongs to.      |\n| `createdAt`   | string | ISO 8601 timestamp of when the task was created. |\n| `updatedAt`   | string | ISO 8601 timestamp of the last update.           |\n\n---\n\n## Response Status Codes\n\n| Status Code               | Description                                              |\n|---------------------------|----------------------------------------------------------|\n| `200 OK`                  | Task retrieved successfully.                             |\n| `401 Unauthorized`        | Missing or invalid Bearer token.                         |\n| `404 Not Found`           | The specified project or task was not found.             |\n| `500 Internal Server Error` | An unexpected error occurred on the server.            |"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Task",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_0n36}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/v1/tasks/6a3a923dbb21772646518b24",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "v1",
+                "tasks",
+                "6a3a923dbb21772646518b24"
+              ]
+            },
+            "description": "# Delete Task\n\n## Summary\nPermanently deletes a task by its unique identifier. This action is irreversible.\n\n---\n\n## Authentication\nThis endpoint requires a **Bearer Token** for authorization.\n\n- **Type:** Bearer Token\n- **Token Variable:** `{{json_web_token_0fdo}}`\n\nInclude the token in the `Authorization` header:\n```\nAuthorization: Bearer {{json_web_token_0fdo}}\n```\n\n> Requests without a valid token will receive a `401 Unauthorized` response.\n\n---\n\n## Request Details\n\n| Property         | Value                                                          |\n|------------------|----------------------------------------------------------------|\n| **Method**       | `DELETE`                                                       |\n| **URL**          | `http://localhost:3000/api/v1/tasks/6a3a923dbb21772646518b24` |\n| **Body**         | None                                                           |\n| **Query Params** | None                                                           |\n\n---\n\n## Path Parameters\n\n| Parameter | Type   | Required | Description                                    |\n|-----------|--------|----------|------------------------------------------------|\n| `taskId`  | string | Yes      | The unique identifier of the task to delete.   |\n\n---\n\n## Request Body\n\nThis endpoint does not require a request body.\n\n---\n\n## Expected Response\n\nOn success, the endpoint returns `200 OK` or `204 No Content`.\n\n- **`200 OK`** — May return a confirmation message or the deleted task object.\n- **`204 No Content`** — Task was deleted successfully with no response body.\n\n```json\n{\n  \"message\": \"Task deleted successfully.\"\n}\n```\n\n| Field     | Type   | Description                          |\n|-----------|--------|--------------------------------------|\n| `message` | string | Confirmation message of the deletion. |\n\n---\n\n## Response Status Codes\n\n| Status Code               | Description                                              |\n|---------------------------|----------------------------------------------------------|\n| `200 OK`                  | Task was successfully deleted (with response body).      |\n| `204 No Content`          | Task was successfully deleted (no response body).        |\n| `401 Unauthorized`        | Missing or invalid Bearer token.                         |\n| `404 Not Found`           | The specified task was not found.                        |\n| `500 Internal Server Error` | An unexpected error occurred on the server.            |"
+          },
+          "response": []
+        }
+      ],
+      "description": "This folder has all the requests for managing tasks inside a project. You can create, update, and delete tasks, and get a list of tasks with optional filters."
+    },
+    {
+      "name": "audit log",
+      "item": [
+        {
+          "name": "Get Logs",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{supabase_service_role_api_key_0n36}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/api/projects/6a688b9e30bf4fbc9cad581a/tasks/6a689522f4c9d2b95880d516/audit-logs",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "projects",
+                "6a688b9e30bf4fbc9cad581a",
+                "tasks",
+                "6a689522f4c9d2b95880d516",
+                "audit-logs"
+              ]
+            },
+            "description": "# Get Logs\n\n## Summary\n\nRetrieves the audit log entries for a specific task within a project, providing a history of all changes made to the task.\n\n---\n\n## Authentication\n\nThis endpoint requires a **Bearer Token** for authorization.\n\n- **Type:** Bearer Token\n    \n- **Token Variable:** `{{json_web_token_0fdo}}`\n    \n\nInclude the token in the `Authorization` header:\n\n```\nAuthorization: Bearer {{json_web_token_0fdo}}\n\n ```\n\n> Requests without a valid token will receive a `401 Unauthorized` response. \n  \n\n---\n\n## Request Details\n\n| Property | Value |\n| --- | --- |\n| **Method** | `GET` |\n| **URL** | `http://localhost:3000/api/projects/:projectId/tasks/:taskId/audit-logs` |\n| **Body** | None |\n| **Query Params** | None |\n\n---\n\n## Path Parameters\n\n| Parameter | Type | Required | Description |\n| --- | --- | --- | --- |\n| `projectId` | `string` | Yes | The unique identifier of the project. |\n| `taskId` | `string` | Yes | The unique identifier of the task within the project. |\n\n---\n\n## Expected Response\n\nOn success, the endpoint returns `200 OK`.\n\n``` json\n[\n  {\n    \"id\": \"64b1f2c3e4b0a1d2e3f4a5b6\",\n    \"taskId\": \"6a689522f4c9d2b95880d516\",\n    \"projectId\": \"6a688b9e30bf4fbc9cad581a\",\n    \"changedBy\": {\n      \"id\": \"64a0e1b2c3d4e5f6a7b8c9d0\",\n      \"name\": \"John Doe\",\n      \"email\": \"john.doe@example.com\"\n    },\n    \"field\": \"status\",\n    \"fromStatus\": \"in-progress\",\n    \"toStatus\": \"done\",\n    \"createdAt\": \"2024-06-15T10:30:00.000Z\"\n  }\n]\n\n ```\n\n| Field | Type | Description |\n| --- | --- | --- |\n| `id` | `string` | Unique identifier of the audit log entry. |\n| `taskId` | `string` | The ID of the task that was changed. |\n| `projectId` | `string` | The ID of the project the task belongs to. |\n| `changedBy` | `object` | Information about the user who made the change (id, name, email). |\n| `field` | `string` | The name of the field that was changed. |\n| `oldValue` | `string` | The previous value of the field before the change. |\n| `newValue` | `string` | The new value of the field after the change. |\n| `createdAt` | `string` | ISO 8601 timestamp of when the change was recorded. |\n\n---\n\n## Response Status Codes\n\n| Status Code | Description |\n| --- | --- |\n| `200 OK` | Successfully retrieved audit logs. |\n| `401 Unauthorized` | Missing or invalid token. |\n| `404 Not Found` | Project or task not found. |\n| `500 Internal Server Error` | Unexpected server error. |"
+          },
+          "response": []
+        }
+      ],
+      "description": "This folder has a request to see the history of changes made to a task. It shows what was changed and when."
+    }
+  ],
+  "variable": [
+    {
+      "key": "json_web_token_0fdo",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_1eg9",
+      "secret": true
+    },
+    {
+      "key": "supabase_service_role_api_key_0fdo",
+      "secret": true
+    },
+    {
+      "key": "auth_secret_0fdo",
+      "secret": true
+    },
+    {
+      "key": "supabase_service_role_api_key_0n36",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_0n36",
+      "secret": true
+    },
+    {
+      "key": "auth_secret_0n36",
+      "secret": true
+    }
+  ]
+}
