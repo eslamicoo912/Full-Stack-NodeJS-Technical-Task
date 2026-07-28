@@ -6,12 +6,11 @@ import type { User } from '../../types/user';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(() => !!getToken());
 
   // Restore the session on page load if a token is stored
   useEffect(() => {
     if (!getToken()) {
-      setIsLoading(false);
       return;
     }
     getMeApi()
